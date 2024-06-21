@@ -15,4 +15,9 @@ public class Course {
     private Long id;
 
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @JoinColumn(name = "student_id")
+    private Student student;
+
 }

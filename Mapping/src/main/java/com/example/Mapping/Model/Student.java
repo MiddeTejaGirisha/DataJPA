@@ -19,9 +19,7 @@ public class Student {
 
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "student_courses",
-            joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private Set<Course> courses = new HashSet<>();
 }
