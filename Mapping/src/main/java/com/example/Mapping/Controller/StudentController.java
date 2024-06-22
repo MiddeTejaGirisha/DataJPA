@@ -4,6 +4,7 @@ import com.example.Mapping.Model.Student;
 import com.example.Mapping.Service.StudentService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,41 +20,45 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+    // Create a new student
     @PostMapping("/add")
-    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
-        Student savedStudent = studentService.addStudent(student);
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        Student savedStudent = studentService.createStudent(student);
         return ResponseEntity.ok(savedStudent);
     }
 
-    @GetMapping("/name/{name}")
-    public ResponseEntity<List<Student>> getStudentsByName(@PathVariable String name) {
-        List<Student> students = studentService.getStudentsByName(name);
-        return ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/age/{age}/email/{emailDomain}")
-    public ResponseEntity<List<Student>> getStudentsByAgeGreaterThanAndEmailContains(
-            @PathVariable int age, @PathVariable String emailDomain) {
-        List<Student> students = studentService.getStudentsByAgeGreaterThanAndEmailContains(age, emailDomain);
-        return ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/name/{name}/age/{age}")
-    public ResponseEntity<List<Student>> getStudentsByNameAndAge(
-            @PathVariable String name, @PathVariable int age) {
-        List<Student> students = studentService.getStudentsByNameAndAge(name, age);
-        return ResponseEntity.ok(students);
-    }
-
-    @GetMapping("/email/{email}")
-    public ResponseEntity<Student> getStudentByEmail(@PathVariable String email) {
-        Student student = studentService.getStudentByEmail(email);
+    // Get a student by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<Student> getStudentById(@PathVariable Long id) {
+        Student student = studentService.getStudentById(id);
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(student);
     }
 
+    // Get all students
     @GetMapping("/all")
     public ResponseEntity<List<Student>> getAllStudents() {
         List<Student> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
+    }
+
+    // Get paged and sorted students
+    @GetMapping("/paged")
+    public ResponseEntity<Page<Student>> getStudentsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy) {
+        Page<Student> students = studentService.getStudents(page, size, sortBy);
+        return ResponseEntity.ok(students);
+    }
+
+    // Get sorted students
+    @GetMapping("/sorted")
+    public ResponseEntity<List<Student>> getStudentsSorted(
+            @RequestParam(defaultValue = "name") String sortBy) {
+        List<Student> students = studentService.getStudentsSortedBy(sortBy);
         return ResponseEntity.ok(students);
     }
 }

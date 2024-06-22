@@ -3,6 +3,10 @@ package com.example.Mapping.Service;
 import com.example.Mapping.Model.Student;
 import com.example.Mapping.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,27 +19,30 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    public Student addStudent(Student student) {
+    // Create a new student
+    public Student createStudent(Student student) {
         return studentRepository.save(student);
     }
 
-    public List<Student> getStudentsByName(String name) {
-        return studentRepository.findByName(name);
+    // Get a student by ID
+    public Student getStudentById(Long id) {
+        return studentRepository.findById(id).orElse(null);
     }
 
-    public List<Student> getStudentsByAgeGreaterThanAndEmailContains(int age, String emailDomain) {
-        return studentRepository.findByAgeGreaterThanAndEmailContains(age, emailDomain);
-    }
-
-    public List<Student> getStudentsByNameAndAge(String name, int age) {
-        return studentRepository.findStudentsByNameAndAge(name, age);
-    }
-
-    public Student getStudentByEmail(String email) {
-        return studentRepository.findStudentByEmail(email);
-    }
-
+    // Get all students
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
+
+    // Get paged and sorted students
+    public Page<Student> getStudents(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return studentRepository.findAll(pageable);
+    }
+
+    // Get sorted students
+    public List<Student> getStudentsSortedBy(String sortBy) {
+        return studentRepository.findAll(Sort.by(sortBy));
+    }
+
 }
