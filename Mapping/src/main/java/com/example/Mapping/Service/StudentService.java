@@ -16,19 +16,31 @@ public class StudentService {
 
 
     public Student createStudent(Student student) {
+
         return studentRepository.save(student);
     }
 
 
     public List<Student> getAllStudents() {
+
         return studentRepository.findAll();
     }
 
 
     public Student getStudentById(Long id) {
+
         return studentRepository.findById(id).orElse(null);
     }
+
+    public Student updateStudent(Long id, Student updatedStudent) {
+        Student existingStudent = studentRepository.findById(id).orElse(null);
+        assert existingStudent != null;
+        existingStudent.setName(updatedStudent.getName());
+        existingStudent.setCourses(updatedStudent.getCourses());
+        return studentRepository.save(existingStudent);
+    }
     public void deleteStudent(Long id) {
+
         studentRepository.deleteById(id);
     }
 }
