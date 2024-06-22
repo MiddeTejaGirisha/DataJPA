@@ -2,7 +2,9 @@ package com.example.Mapping.Controller;
 
 import com.example.Mapping.Model.Student;
 import com.example.Mapping.Service.StudentService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,30 +12,48 @@ import java.util.List;
 @RestController
 @RequestMapping("/Students")
 public class StudentController {
+    private final StudentService studentService;
+
     @Autowired
-    private StudentService studentService;
-
-    @PostMapping("")
-    public Student createStudent(@RequestBody Student student) {
-        return studentService.createStudent(student);
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
     }
 
-    @GetMapping("")
-    public List<Student> getAllStudents() {
-        return studentService.getAllStudents();
+    @PostMapping("/add")
+    public ResponseEntity<Student> addStudent(@RequestBody Student student) {
+        Student savedStudent = studentService.addStudent(student);
+        return ResponseEntity.ok(savedStudent);
     }
 
-    @GetMapping("/{id}")
-    public Student getStudentById(@PathVariable Long id) {
-        return studentService.getStudentById(id);
+    @GetMapping("/name/{name}")
+    public ResponseEntity<List<Student>> getStudentsByName(@PathVariable String name) {
+        List<Student> students = studentService.getStudentsByName(name);
+        return ResponseEntity.ok(students);
     }
 
-    @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
-        return studentService.updateStudent(id, student);
+    @GetMapping("/age/{age}/email/{emailDomain}")
+    public ResponseEntity<List<Student>> getStudentsByAgeGreaterThanAndEmailContains(
+            @PathVariable int age, @PathVariable String emailDomain) {
+        List<Student> students = studentService.getStudentsByAgeGreaterThanAndEmailContains(age, emailDomain);
+        return ResponseEntity.ok(students);
     }
-    @DeleteMapping("/{id}")
-    public void deleteStudent(@PathVariable Long id) {
-        studentService.deleteStudent(id);
+
+    @GetMapping("/name/{name}/age/{age}")
+    public ResponseEntity<List<Student>> getStudentsByNameAndAge(
+            @PathVariable String name, @PathVariable int age) {
+        List<Student> students = studentService.getStudentsByNameAndAge(name, age);
+        return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Student> getStudentByEmail(@PathVariable String email) {
+        Student student = studentService.getStudentByEmail(email);
+        return ResponseEntity.ok(student);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Student>> getAllStudents() {
+        List<Student> students = studentService.getAllStudents();
+        return ResponseEntity.ok(students);
     }
 }
