@@ -16,6 +16,9 @@ public class StudentService {
 
 
     public Student createStudent(Student student) {
+        for(Course course:student.getCourses()){
+            course.setStudent(student);
+        }
         return studentRepository.save(student);
     }
 
